@@ -19,6 +19,18 @@ def read_users():
     return {'users': fake_db}
 
 
+@app.get(
+    '/users/{user_id}', status_code=HTTPStatus.OK, response_model=UserPublic
+)
+def read_user_by_id(user_id: int):
+    if user_id < 1 or user_id > len(fake_db):
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND, detail='USER NOT FOUND'
+        )
+
+    return fake_db[user_id - 1]
+
+
 @app.post('/users/', status_code=HTTPStatus.CREATED, response_model=UserPublic)
 def create_user(user: UserSchema):
     user_with_id = UserDB(
